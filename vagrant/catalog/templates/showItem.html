@@ -1,0 +1,41 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+	<div class="row divider green">
+		<div class="col-md-12"></div>
+	</div>
+	<div class="row banner menu">
+		<div class="col-md-11 col-md-offset-1 padding-none">
+			<h1>
+        <div class = "col-md-6 text-left"> {{ item.name }} </div>
+
+        {% if 'username' in session and session['user_id'] == item.user_id %}
+          <div class="col-md-4 text-right">
+            <a href="{{url_for('editItem', item_id = item.id)}}">Edit</a> |
+            <a href="{{url_for('deleteItem', item_id = item.id)}}">Delete</a>
+          <div>
+        {% endif %}
+      </h1>
+    </div>
+  </div>
+  <div class = menu-list>
+    <div class="row padding-top">
+      <h3> Category </h3>
+      <p> {{ item.category.name }} </p>
+    </div>
+    <div class="row">
+      <h3> Description </h3>
+      <p> {{ item.description }} </p>
+    </div>
+    <div class="row">
+      <h3> Created by : {{ item.user.name }} </h3>
+    </div>
+    <div class="row">
+      <h3> Created at : {{ item.time_created }} </h3>
+    </div>
+    <div class="row">
+      <h3> Last Modified at : {{ item.time_updated }} </h3>
+    </div>
+</div>
+{% endblock %}
