@@ -26,7 +26,7 @@ User1.hash_password('12345')
 session.add(User1)
 session.commit()
 
-# Menu for UrbanBurger
+# Items for Soccer
 category1 = Category(user_id=1, name="Soccer")
 
 session.add(category1)
@@ -59,7 +59,7 @@ session.add(item4)
 session.commit()
 
 
-# Menu for Super Stir Fry
+# Items for Basketball
 category2 = Category(user_id=1, name="Basketball")
 
 session.add(category2)
@@ -86,7 +86,7 @@ session.add(item1)
 session.commit()
 
 
-# Menu for Thyme for that
+# Items for Frisbee
 category1 = Category(user_id=1, name="Frisbee")
 
 session.add(category1)

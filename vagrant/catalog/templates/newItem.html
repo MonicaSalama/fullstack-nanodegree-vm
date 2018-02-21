@@ -22,7 +22,7 @@
 					<div class="form-group">
 					  <label for="category">Select category:</label>
 					  <select type="text" class="form-control" name="category">
-							<option disabled="disabled" selected="selected">Select an option.</option>
+							<option disabled="disabled" selected="selected">Select an option</option>
 							{% for category in categories %}
 						    <option value='{{category.id}}'> {{category.name}} </option>
 							{% endfor %}
