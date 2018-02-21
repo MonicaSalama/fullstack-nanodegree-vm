@@ -57,4 +57,6 @@ JSON endpoints:
     'item_id' shoud be replaced with the id of the item.
      Details of a specific item
 
+Note:
+   - lotsofitems.py is just a script, i have used to fill the database with sample date.
 Finally, Hope you will enjoy using the App!
