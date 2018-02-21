@@ -1,4 +1,5 @@
 fullstack-nanodegree-vm
 =============
 
-Common code for the Relational Databases and Full Stack Fundamentals courses
+ - Code for this project inside vagrant/catalog directory.
+ - You may also finf README.md for this project in vagrant/catalog directory.
