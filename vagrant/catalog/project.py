@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from flask import Flask, render_template, request, redirect, jsonify, url_for
+from flask import flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item, User
@@ -16,9 +17,9 @@ app = Flask(__name__)
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
-APPLICATION_NAME = "RItem Catalog"   #remember to change
-#
-#
+APPLICATION_NAME = "Item Catalog"
+
+
 # Connect to Database and create database session
 engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
@@ -35,6 +36,7 @@ def showLogin():
     login_session['state'] = state
     # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -88,8 +90,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(
+            json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -124,10 +126,12 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px" \
+        + ";-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
+
 
 # User Helper Functions
 def createUser(login_session):
@@ -148,8 +152,9 @@ def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
-    except:
+    except Exception as e:
         return None
+
 
 # JSON APIs to view all catalog
 @app.route('/catalog.json')
@@ -172,11 +177,13 @@ def categoryJSON():
     categories = session.query(Category).all()
     return jsonify(categories=[i.serialize for i in categories])
 
+
 # JSON APIs to view category items
 @app.route('/category/<int:category_id>/items.json')
 def categoryItemsJSON(category_id):
     items = session.query(Item).filter_by(category_id=category_id).all()
     return jsonify(items=[i.serialize for i in items])
+
 
 # JSON APIs to view items
 @app.route('/items.json')
@@ -184,25 +191,27 @@ def itemsJSON():
     items = session.query(Item).all()
     return jsonify(items=[i.serialize for i in items])
 
+
 # JSON APIs to view certain item
 @app.route('/<int:item_id>/item.json')
 def itemJSON(item_id):
     item = session.query(Item).filter_by(id=item_id).one()
-    return jsonify(item = item.serialize)
+    return jsonify(item=item.serialize)
 
 
-
-# Show all categories
+# Show all items
 @app.route('/')
 @app.route('/allItems')
 def showAllItems():
     items = session.query(Item).all()
     return render_template('items.html', items=items)
 
+
+# Show a specific item
 @app.route('/item/<int:item_id>/')
 def showItem(item_id):
-    item = session.query(Item).filter_by(id = item_id).one()
-    return render_template('showItem.html', item = item)
+    item = session.query(Item).filter_by(id=item_id).one()
+    return render_template('showItem.html', item=item)
 
 
 # Show category items
@@ -215,6 +224,7 @@ def showItems(category_id):
 
     return render_template('items.html', items=items)
 
+
 # Edit item
 @app.route('/item/<int:item_id>/edit', methods=['GET', 'POST'])
 def editItem(item_id):
@@ -222,7 +232,9 @@ def editItem(item_id):
         return redirect('/login')
     editedItem = session.query(Item).filter_by(id=item_id).one()
     if login_session['user_id'] != editedItem.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to edit this item.');}</script><body onload='myFunction()'>"
+        return "<script>function myFunction() {alert("\
+            + "'You are not authorized to edit this item.');}</script>"\
+            + "<body onload='myFunction()'>"
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -237,17 +249,20 @@ def editItem(item_id):
         return redirect(url_for('showItem', item_id=editedItem.id))
     else:
         categories = session.query(Category).all()
-        return render_template('editItem.html', item=editedItem, categories=categories)
+        return render_template(
+            'editItem.html', item=editedItem, categories=categories)
 
 
-#Delete an item
+# Delete an item
 @app.route('/item/<int:item_id>/delete', methods=['GET', 'POST'])
 def deleteItem(item_id):
     if 'username' not in login_session:
         return redirect('/login')
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
     if login_session['user_id'] != itemToDelete.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to delete this item. Please create your own items in order to delete items.');}</script><body onload='myFunction()'>"
+        return "<script>function myFunction() {alert('You are not authorized" \
+    + "to delete this item.');}</script><body onload='myFunction()'>"
+
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
@@ -282,8 +297,9 @@ def newCategory():
     else:
         return render_template('newCategory.html')
 
+
 # Create a new  item
-@app.route('/newitem', methods = ['GET', 'POST'])
+@app.route('/newitem', methods=['GET', 'POST'])
 def createNewItem():
     if 'username' not in login_session:
         return redirect('/login')
@@ -300,6 +316,7 @@ def createNewItem():
     else:
         categories = session.query(Category).all()
         return render_template('newItem.html', categories=categories)
+
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
 @app.route('/gdisconnect')
@@ -319,7 +336,8 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(
+            json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 

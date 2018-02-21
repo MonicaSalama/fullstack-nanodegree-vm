@@ -3,7 +3,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
 from passlib.apps import custom_app_context as pwd_context
-import random, string
+import random
+import string
 
 Base = declarative_base()
 secret_key = ''.join(
@@ -40,6 +41,7 @@ class Category(Base):
             'id': self.id,
             'user_id': self.user_id
         }
+
 
 class Item(Base):
     __tablename__ = 'item'
